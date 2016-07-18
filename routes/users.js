@@ -4,12 +4,19 @@ var bodyParser = require('body-parser');
 
 var userController = require('../controllers/users');
 
-/* GET users listing. */
+// Get ALL user and create user
 router.route('/')
   .get(userController.getAll)
   .post(userController.createUser);
 
+// Get User by ID
 router.route('/:user_id')
-  .get(userController.getUserById);
+  .get(userController.getUserById)
+  .patch(userController.updateUserById)
+  .delete(userController.removeUserById);
+
+// Get User by EMAIL
+router.route('/u')
+  .post(userController.getUserByEmail);
 
 module.exports = router;

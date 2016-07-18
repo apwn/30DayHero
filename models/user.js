@@ -5,9 +5,10 @@ var userSchema = mongoose.Schema({
   lastName: String,
   email: { type: String, required: [true, 'Email is required'], unique: true },
   password: String,
-  isAdmin: { type: Boolean, default: false},
+  isAdmin: { type: Boolean, default: false  },
   created_at: Date,
   updated_at: Date,
+  // softDeleted: { type: Boolean, default: false },
   fb: {
     id: String,
     access_token: String,
