@@ -24,10 +24,11 @@ function createUser(req,res){
 function getUserById(req,res){
   console.log(req.params);
   User.findById(req.params.user_id, function(err, user) {
-  if (err) throw err;
-
-  // show the one user
-  res.json(user);
+  if(err) res.json({message: 'Could not find user b/c:' + err});
+  // show the user with ID
+  if (user){
+    res.json(user);
+  } 
 });
 }
 
