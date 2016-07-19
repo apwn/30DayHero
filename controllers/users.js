@@ -1,5 +1,9 @@
 var userModel = require('../models/user');
 var User = userModel.User;
+var jwt = require('jsonwebtoken');
+var config     = require('../config/config');
+
+var secret = config.secret;
 
 function getAll(req, res) {
     User.find({}, function(error, user) {
@@ -71,8 +75,10 @@ function authUser(req,res){
                 if (err) throw err;
 
                 if (isMatch) {
-                    console.log('logged in');
-                    res.status(200).json({message: 'logged in'});
+                  // if user is found and password is right
+                  // create a token
+                  var token = jwt.sign(user, secret, {expiresIn: '24h'});
+                    res.status(200).json({success: true, message: 'logged in', token: token, user: user});
                 } else {
                     res.status(403).json({
                         message: "Your login details were incorrect"
