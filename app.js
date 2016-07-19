@@ -49,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Only accessible with token
 app.use('/api/users', expressJWT({secret: config.secret})
-  .unless({path: ['/api/users/auth', '/api/users'], method: 'POST'})); // NO TOKEN FOR THOSE ENDPOINTS
+  .unless({path: ['/auth', '/'], method: 'POST'})); // NO TOKEN FOR THOSE ENDPOINTS
 
 app.use('/', routes);
 app.use('/api/users', users);

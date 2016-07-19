@@ -16,7 +16,11 @@ var userSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     email: String
-  }
+  },
+  habits: [{
+    type: mongoose.Types.ObjectId,
+    ref: 'Habit'
+  }]
 });
 
 // on every save, add the date
