@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
 
-var userSchema = mongoose.Schema({
+var userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
   email: { type: String, required: [true, 'Email is required'], unique: true },
@@ -22,15 +23,50 @@ var userSchema = mongoose.Schema({
 userSchema.pre('save', function(next) {
   // get the current date
   var currentDate = new Date();
-
   // change the updated_at field to current date
   this.updated_at = currentDate;
 
   // if created_at doesn't exist, add to that field
-  if (!this.created_at)
-    this.created_at = currentDate;
+  if (!this.created_at) this.created_at = currentDate;
+
+  var user = this;
+
+  if(!user.isModified('password')) return next();
+
+  var hash = bcrypt.hashSync(user.password, 10);
+  user.password = hash;
 
   next();
 });
 
-module.exports = mongoose.model('User', userSchema);
+// delete entries from JSON
+userSchema.set('toJSON', {
+    transform: function(doc, ret, options) {
+        delete ret.password;
+        return ret;
+    }
+});
+
+// whitelist entries from JSON
+// userSchema.set('toJSON', {
+//     transform: function(doc, ret, options) {
+//         var retJson = {
+//             email: ret.email,
+//             registered: ret.registered,
+//             modified: ret.modified
+//         };
+//         return retJson;
+//     }
+// });
+
+userSchema.methods.authenticate = function(pwd, callback){
+  // Compare pwd with bcrypt stored pwd
+  bcrypt.compare(pwd, this.password, callback);
+};
+
+
+var User = mongoose.model('User', userSchema);
+// module.exports = mongoose.model('User', userSchema);
+module.exports = {
+  User: User
+};

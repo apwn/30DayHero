@@ -19,4 +19,8 @@ router.route('/:user_id')
 router.route('/u')
   .post(userController.getUserByEmail);
 
+//Login user
+router.route('/auth')
+  .post(userController.authUser);
+
 module.exports = router;

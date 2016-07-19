@@ -1,8 +1,9 @@
-var User = require('../models/user');
+var userModel = require('../models/user');
+var User = userModel.User;
 
 function getAll(req, res) {
     User.find({}, function(error, user) {
-        if (error) res.json({
+        if (error) res.status(401).json({
             message: 'Could not find user b/c:' + error
         });
 
@@ -14,8 +15,7 @@ function getAll(req, res) {
 }
 
 function createUser(req, res) {
-    var user = new User(req.body); // create a new instance of the Bear model
-    //  bear.name = req.body.name;  // set the bears name (comes from the request)
+    var user = new User(req.body); // create a new instance of the User model
 
     // save the user and check for errors
     user.save(function(err) {
@@ -30,7 +30,7 @@ function createUser(req, res) {
 
 function getUserById(req, res) {
     User.findById(req.params.user_id, function(err, user) {
-        if (err) res.json({
+        if (err) res.status(401).json({
             message: 'Could not find user b/c:' + err
         });
         // show the user with ID
@@ -46,7 +46,7 @@ function getUserByEmail(req, res) {
     User.find({
         email: user.email
     }, function(err, user) {
-        if (err) res.json({
+        if (err) res.status(401).json({
             message: 'Could not find user b/c:' + err
         });
         // object of the user
@@ -56,9 +56,36 @@ function getUserByEmail(req, res) {
     });
 }
 
+function authUser(req,res){
+  var userParams = req.body;
+
+    User.findOne({
+        email: userParams.email
+    }, function(err, user) {
+        if (!user) {
+            res.status(403).json({
+                message: "Your email doesn't exist"
+            });
+        } else {
+            user.authenticate(userParams.password, function(err, isMatch) {
+                if (err) throw err;
+
+                if (isMatch) {
+                    console.log('logged in');
+                    res.status(200).json({message: 'logged in'});
+                } else {
+                    res.status(403).json({
+                        message: "Your login details were incorrect"
+                    });
+                }
+            });
+        }
+    });
+}
+
 function updateUserById(req, res) {
     User.findById(req.params.user_id, function(err, user) {
-        if (err) res.json({
+        if (err) res.status(401).json({
             message: 'Could not find user b/c:' + err
         });
         console.log(req.body);
@@ -85,7 +112,7 @@ function removeUserById(req, res) {
         _id: req.params.user_id
     }, function(err, bear) {
         if (err) {
-            res.json({
+            res.status(401).json({
                 message: err
             });
         }
@@ -101,5 +128,6 @@ module.exports = {
     getUserById: getUserById,
     getUserByEmail: getUserByEmail,
     updateUserById: updateUserById,
-    removeUserById: removeUserById
+    removeUserById: removeUserById,
+    authUser: authUser
 };
