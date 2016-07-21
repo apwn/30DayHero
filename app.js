@@ -48,8 +48,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Only accessible with token
-app.use('/api/users', expressJWT({secret: config.secret})
-.unless({ url: ['/api/users', 'api/users/auth'], method: ['POST'] })); // NO TOKEN FOR THOSE ENDPOINTS
+// app.use('/api/users', expressJWT({secret: config.secret})
+// .unless({ url: ['/api/users', 'api/users/auth'], method: ['POST'] })); // NO TOKEN FOR THOSE ENDPOINTS
 // {path: '/info', method: 'GET'}
 app.use('/', routes);
 app.use('/api/users', users);

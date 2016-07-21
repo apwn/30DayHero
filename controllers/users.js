@@ -38,9 +38,12 @@ function createUser(req, res) {
     user.save(function(err) {
         if (err)
             res.send(err);
-
+            var token = jwt.sign(user, secret, {expiresIn: '24h'});
         res.json({
-            message: 'User created!'
+            success: true,
+            message: 'User created!',
+            token: token,
+            user: user
         });
     });
 }
