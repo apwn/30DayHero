@@ -43,7 +43,7 @@ function createUser(req, res) {
             success: true,
             message: 'User created!',
             token: token,
-            user: user
+            user: {firstName: user.firstName, email: user.email}
         });
     });
 }
@@ -88,13 +88,16 @@ function authUser(req,res){
             });
         } else {
             user.authenticate(userParams.password, function(err, isMatch) {
-                if (err) throw err;
+                if (err)
+                return res.status(401).json({
+                    message: 'Could not find user b/c:' + err
+                });
 
                 if (isMatch) {
                   // if user is found and password is right
                   // create a token
                   var token = jwt.sign(user, secret, {expiresIn: '24h'});
-                    res.status(200).json({success: true, message: 'logged in', token: token, user: user});
+                    res.status(200).json({success: true, message: 'logged in', token: token, user: {firstName: user.firstName, email: user.email}});
                 } else {
                     res.status(403).json({
                         message: "Your login details were incorrect"
