@@ -9,6 +9,10 @@ router.route('/')
   .get(userController.getAll)
   .post(userController.createUser);
 
+// // Get DB Stats
+// router.route('/info')
+//   .get(userController.userInfo);
+
 // Get User by ID
 router.route('/:user_id')
   .get(userController.getUserById)

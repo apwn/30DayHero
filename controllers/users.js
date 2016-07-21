@@ -5,6 +5,19 @@ var config     = require('../config/config');
 
 var secret = config.secret;
 
+function userInfo(req,res) {
+  User.count({}, function(error, count) {
+      if (error) res.status(401).json({
+          message: 'Could not find user b/c:' + error
+      });
+
+      res.json({
+          userCount: count,
+          title: "User Stats"
+      });
+  });
+}
+
 function getAll(req, res) {
     User.find({}, function(error, user) {
         if (error) res.status(401).json({
@@ -130,6 +143,7 @@ function removeUserById(req, res) {
 
 module.exports = {
     getAll: getAll,
+    userInfo: userInfo,
     createUser: createUser,
     getUserById: getUserById,
     getUserByEmail: getUserByEmail,
